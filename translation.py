@@ -1,154 +1,127 @@
-# Jishu Developer 
-# Don't Remove Credit 🥺
-# Telegram Channel @Madflix_Bots
-# Backup Channel @JishuBotz
-# Developer @JishuDeveloper
-
-
-
-
 import os
 from config import Config
 
 class Translation(object):
-  START_TXT = """Hey {}
+    START_TXT = """
+> **👋 Greetings {}!**
 
-➻ I Am A Advanced Auto Forward Bot
+> **🚀 ɪɴᴛʀᴏᴅᴜᴄɪɴɢ ᴛʜᴇ ᴜʟᴛɪᴍᴀᴛᴇ ᴄᴏɴᴛᴇɴᴛ ᴍɪʀʀᴏʀɪɴɢ sʏsᴛᴇᴍ.**
   
-➻ I Can Forward All Message From One Channel To Another Channel 
-  
-➻ Click Help Button To Know More About Me
-  
-<b>Bot Is Made By @Madflix_Bots</b>"""
+> **◈ ᴇꜰꜰᴏʀᴛʟᴇssʟʏ ᴛʀᴀɴsᴍɪᴛ ᴍᴇssᴀɢᴇs ᴀᴄʀᴏss ᴄʜᴀɴɴᴇʟs ɪɴ ʀᴇᴀʟ-ᴛɪᴍᴇ.**
+> **◈ ʙᴜɪʟᴛ ꜰᴏʀ sᴘᴇᴇᴅ, ᴘʀᴇᴄɪsɪᴏɴ, ᴀɴᴅ ᴛᴏᴛᴀʟ ᴀᴜᴛᴏᴍᴀᴛɪᴏɴ.**
 
-
-  HELP_TXT = """<b><u>🛠️ Help</b></u>
-
-<b><u>📚 Available Commands :</u></b>
-⏣ __/start - Check I'm Alive__ 
-⏣ __/forward - Forward Messages__
-⏣ __/unequify - Delete Duplicate Messages In Channels__
-⏣ __/settings - Configure Your Settings__
-⏣ __/reset - Reset Your Settings__
-
-<b><u>💢 Features :</b></u>
-► __Forward Message From Public Channel To Your Channel Without Admin Permission. If The Channel Is Private Need Admin Permission__
-► __Forward Message From Private Channel To Your Channel By Using Userbot(User Must Be Member In There)__
-► __Custom Caption__
-► __Custom Button__
-► __Support Restricted Chats__
-► __Skip Duplicate Messages__
-► __Filter Type Of Messages__
-► __Skip Messages Based On Extensions & Keywords & Size__
-"""
-  
-  HOW_USE_TXT = """<b><u>⚠️ Before Forwarding :</b></u>
-  
-► __Add A Bot Or Userbot__
-► __Add Atleast One To Channel (Your Bot/Userbot Must Be Admin In There)__
-► __You Can Add Chats Or Bots By Using /settings__
-► __If The **From Channel** Is Private Your Userbot Must Be Member In There Or Your Bot Must Need Admin Permission In There Also__
-► __Then Use /forward To Forward Messages__"""
-  
-  ABOUT_TXT = """<b>🤖 My Name :</b> {}
-<b>📝 Language :</b> <a href='https://python.org'>Python 3</a>
-<b>📚 Library :</b> <a href='https://pyrogram.org'>Pyrogram 2.0</a>
-<b>🚀 Server :</b> <a href='https://heroku.com'>Heroku</a>
-<b>📢 Channel :</b> <a href='https://t.me/Madflix_Bots'>Madflix Botz</a>
-<b>🧑‍💻 Developer :</b> <a href='https://t.me/CallAdminRobot'>Jishu Developer</a>
-
-<b>♻️ Bot Made By :</b> @Madflix_Bots"""
-  
-  STATUS_TXT = """<b><u>Bot Status</u></b>
-  
-<b>👱 Total Users :</b> <code>{}</code>
-
-<b>🤖 Total Bots :</b> <code>{}</code>
-
-<b>🔃 Forwardings :</b> <code>{}</code>
-"""
-  
-  FROM_MSG = "<b><u>Set Source Chat</></>\n\nForward The Last Message Or Last Message Link Of Source Chat.\n/cancel - To Cancel This Process"
-  TO_MSG = "<b><u>Choose Target Chat</u></b>\n\nChoose Your Target Chat From The Given Buttons.\n/cancel - To Cancel This Process"
-  SKIP_MSG = "<b><u>Set Message Skiping Number</u></b>\n\nSkip The Message As Much As You Enter The Number And The Rest Of The Message Will Be Forwarded\nDefault Skip Number = <code>0</code>\n<code>eg: You Enter 0 = 0 Message Skiped\nYou Enter 5 = 5 Message Skiped</code>\n/cancel - To Cancel This Process"
-  CANCEL = "Process Cancelled Succefully !"
-  BOT_DETAILS = "<b><u>📄 Bot Details</u></b>\n\n<b>➣ Name :</b> <code>{}</code>\n<b>➣ Bot ID :</b> <code>{}</code>\n<b>➣ Username :</b> @{}"
-  USER_DETAILS = "<b><u>📄 UserBot Details</u></b>\n\n<b>➣ Name :</b> <code>{}</code>\n<b>➣ User ID :</b> <code>{}</code>\n<b>➣ Username :</b> @{}"  
-         
-  TEXT = """<b><u>Forward Status</u></b>
-  
-<b>🕵 Fetch Message :</b> <code>{}</code>
-
-<b>✅ Successfully Forward :</b> <code>{}</code>
-
-<b>👥 Dublicate Message :</b> <code>{}</code>
-
-<b>🗑 Deleted Message :</b> <code>{}</code>
-
-<b>🪆 Skipped Message :</b> <code>{}</code>
-
-<b>🔁 Filtered Message :</b> <code>{}</code>
-
-<b>📊 Current Status :</b> <code>{}</code>
-
-<b>🔥 Percentage :</b> <code>{}</code> %
-
-{}
+**✨ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅʜᴀɴᴘᴀʟ sʜᴀʀᴍᴀ**
 """
 
-  TEXT1 = """<b><u>Forwarded Status</u></b>
+    HELP_TXT = """
+**🛠️ ᴏᴘᴇʀᴀᴛɪᴏɴᴀʟ ᴄᴏɴᴛʀᴏʟs**
 
-<b>🕵 Fetched Message :</b> <code>{}</code>
+**📚 ᴇssᴇɴᴛɪᴀʟ ᴄᴏᴍᴍᴀɴᴅs :**
+⏣ `/start` — `ᴠᴇʀɪꜰʏ sʏsᴛᴇᴍ ᴀᴄᴛɪᴠɪᴛʏ`
+⏣ `/forward` — `ʟᴀᴜɴᴄʜ ᴀ ɴᴇᴡ ᴛᴀsᴋ`
+⏣ `/unequify` — `ᴇʟɪᴍɪɴᴀᴛᴇ ʀᴇᴅᴜɴᴅᴀɴᴛ ꜰɪʟᴇs`
+⏣ `/settings` — `ᴛᴀɪʟᴏʀ ʏᴏᴜʀ ᴄᴏɴꜰɪɢᴜʀᴀᴛɪᴏɴ`
+⏣ `/reset` — `ᴡɪᴘᴇ ᴇxɪsᴛɪɴɢ ᴅᴀᴛᴀ`
 
-<b>✅ Successfully Forward :</b> <code>{}</code>
-
-<b>👥 Dublicate Message :</b> <code>{}</code>
-
-<b>🗑 Deleted Message :</b> <code>{}</code>
-
-<b>🪆 Skipped :</b> <code>{}</code>
-
-<b>📊 Stats :</b> <code>{}</code>
-
-<b>⏳ Progress :</b> <code>{}</code>
-
-<b>⏰ ETA :</b> <code>{}</code>
-
-{}"""
-
-  DUPLICATE_TEXT = """<b><u>Unequify Status</u></b>
-
-<b>🕵 Fetched Files :</b> <code>{}</code>
-
-<b>👥 Dublicate Deleted :</b> <code>{}</code>
-
-{}
+**💢 ᴇxᴄʟᴜsɪᴠᴇ ᴄᴀᴘᴀʙɪʟɪᴛɪᴇs :**
+◈ `sᴇᴀᴍʟᴇss ᴘᴜʙʟɪᴄ & ᴘʀɪᴠᴀᴛᴇ ᴍɪʀʀᴏʀɪɴɢ`
+◈ `ɪɴᴛᴇɢʀᴀᴛᴇᴅ ᴜsᴇʀʙᴏᴛ ᴛᴇᴄʜɴᴏʟᴏɢʏ`
+◈ `ᴅʏɴᴀᴍɪᴄ ᴄᴀᴘᴛɪᴏɴs & ɪɴʟɪɴᴇ ɪɴᴛᴇʀꜰᴀᴄᴇs`
+◈ `ᴀᴅᴠᴀɴᴄᴇᴅ ᴅᴜᴘʟɪᴄᴀᴛᴇ ᴅᴇᴛᴇᴄᴛɪᴏɴ`
+◈ `ɢʀᴀɴᴜʟᴀʀ ᴋᴇʏᴡᴏʀᴅ & sɪᴢᴇ ꜰɪʟᴛᴇʀɪɴɢ`
 """
-  DOUBLE_CHECK = """<b><u>Double Checking</u></b>
-  
-Before Forwarding The Messages Click The Yes Button Only After Checking The Following
 
-<b>★ Your Bot :</b> [{botname}](t.me/{botuname})
-<b>★ From Channel :</b> <code>{from_chat}<>
-<b>★ To Channel :</b> <code>{to_chat}</code>
-<b>★ Skip Messages :</b> <code>{skip}</code>
+    HOW_USE_TXT = """
+**⚠️ sᴇᴛᴜᴘ ɪɴsᴛʀᴜᴄᴛɪᴏɴs :**
 
-<i>° [{botname}](t.me/{botuname}) Must Be Admin In <b>Target Chat</b></i> (<code>{to_chat}</code>)
-<i>° If The <b>Source Chat</b> Is Private Your Userbot Must Be Member Or Your Bot Must Be Admin In There Also</i>
+> 1️⃣ `ʟɪɴᴋ ʏᴏᴜʀ ʙᴏᴛ ᴏʀ ᴜsᴇʀʙᴏᴛ ᴠɪᴀ /settings.`
+> 2️⃣ `ɢʀᴀɴᴛ ᴀᴅᴍɪɴ ᴘᴇʀᴍɪssɪᴏɴs ɪɴ ᴛʜᴇ ᴛᴀʀɢᴇᴛ ᴅᴇsᴛɪɴᴀᴛɪᴏɴ.`
+> 3️⃣ `ꜰᴏʀ ᴘʀɪᴠᴀᴛᴇ sᴏᴜʀᴄᴇs, ᴇɴsᴜʀᴇ ᴜsᴇʀʙᴏᴛ ᴍᴇᴍʙᴇʀsʜɪᴘ.`
+> 4️⃣ `ᴇxᴇᴄᴜᴛᴇ /forward ᴛᴏ ʙᴇɢɪɴ ᴛʜᴇ sʏɴᴄ ᴘʀᴏᴄᴇss.`
 
-<b>If The Above Is Checked Then The Yes Button Can Be Clicked</b>"""
+**ᴇɴɢɪɴᴇᴇʀᴇᴅ ʙʏ ᴅʜᴀɴᴘᴀʟ sʜᴀʀᴍᴀ**
+"""
 
+    ABOUT_TXT = """
+**🤖 sʏsᴛᴇᴍ ᴀʀᴄʜɪᴛᴇᴄᴛᴜʀᴇ**
 
+**➣ ɪᴅᴇɴᴛɪᴛʏ :** {}
+**➣ ᴄᴏʀᴇ :** `ᴘʏᴛʜᴏɴ 3.11`
+**➣ ꜰɪʟᴛᴇʀs :** `ᴀɪ-ᴅʀɪᴠᴇɴ`
+**➣ ᴀʀᴄʜɪᴛᴇᴄᴛ :** [ᴅʜᴀɴᴘᴀʟ sʜᴀʀᴍᴀ](https://t.me/DmOwner)
+**➣ ᴜᴘᴛɪᴍᴇ :** `𝟿𝟿.𝟿% ɢᴜᴀʀᴀɴᴛᴇᴇᴅ`
 
+**✨ ᴍᴀɪɴᴛᴀɪɴᴇᴅ ʙʏ ᴅʜᴀɴᴘᴀʟ sʜᴀʀᴍᴀ**
+"""
 
+    STATUS_TXT = """
+**📊 sʏsᴛᴇᴍ ᴀɴᴀʟʏᴛɪᴄs**
 
+**👱 ɢʟᴏʙᴀʟ ᴜsᴇʀs :** `{}`
+**🤖 ᴀᴄᴛɪᴠᴇ ɪɴsᴛᴀɴᴄᴇs :** `{}`
+**🔃 ʟɪᴠᴇ ᴛʀᴀɴsᴍɪssɪᴏɴs :** `{}`
+"""
 
+    FROM_MSG = "**📥 ᴅᴇꜰɪɴᴇ sᴏᴜʀᴄᴇ**\n\n> ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴛʜᴇ ʟᴀsᴛ ᴍᴇssᴀɢᴇ ᴏʀ ᴀ ᴠᴀʟɪᴅ ᴄʜᴀɴɴᴇʟ ʟɪɴᴋ ꜰʀᴏᴍ ᴛʜᴇ sᴏᴜʀᴄᴇ.\n\n❌ `/cancel` — ᴀʙᴏʀᴛ sᴇssɪᴏɴ"
+    TO_MSG = "**📤 ᴅᴇꜰɪɴᴇ ᴅᴇsᴛɪɴᴀᴛɪᴏɴ**\n\n> sᴇʟᴇᴄᴛ ʏᴏᴜʀ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ ꜰʀᴏᴍ ᴛʜᴇ ᴘʀᴇ-ᴄᴏɴꜰɪɢᴜʀᴇᴅ ʟɪsᴛ.\n\n❌ `/cancel` — ᴀʙᴏʀᴛ sᴇssɪᴏɴ"
+    SKIP_MSG = "**🔢 ᴏꜰꜰsᴇᴛ ᴄᴏɴꜰɪɢᴜʀᴀᴛɪᴏɴ**\n\n> sᴘᴇᴄɪꜰʏ ᴛʜᴇ ɴᴜᴍʙᴇʀ ᴏꜰ ɪɴɪᴛɪᴀʟ ᴍᴇssᴀɢᴇs ᴛᴏ ʙᴇ ɪɢɴᴏʀᴇᴅ.\n\n**sᴛᴀɴᴅᴀʀᴅ :** `0`\n❌ `/cancel` — ᴀʙᴏʀᴛ sᴇssɪᴏɴ"
+    CANCEL = "**✅ sᴇssɪᴏɴ ᴛᴇʀᴍɪɴᴀᴛᴇᴅ sᴜᴄᴄᴇssꜰᴜʟʟʏ!**"
+    BOT_DETAILS = "**📄 ᴀᴜᴛᴏᴍᴀᴛᴏɴ ᴘʀᴏꜰɪʟᴇ**\n\n**➣ ʟᴀʙᴇʟ :** `{}`\n**➣ ᴜɪᴅ :** `{}`\n**➣ ʜᴀɴᴅʟᴇ :** @{}"
+    USER_DETAILS = "**📄 ᴜsᴇʀ-ɪɴsᴛᴀɴᴄᴇ ᴘʀᴏꜰɪʟᴇ**\n\n**➣ ʟᴀʙᴇʟ :** `{}`\n**➣ ᴜɪᴅ :** `{}`\n**➣ ʜᴀɴᴅʟᴇ :** @{}"
 
+    TEXT = """
+**🔄 ʟɪᴠᴇ ᴛʀᴀɴsᴍɪssɪᴏɴ sᴛᴀᴛᴜs**
 
+> **🕵️ ɪɴᴅᴇxᴇᴅ :** `{}`
+> **✅ ᴍɪʀʀᴏʀᴇᴅ :** `{}`
+> **👥 ʀᴇᴅᴜɴᴅᴀɴᴛ :** `{}`
+> **🗑️ ɪɴᴠᴀʟɪᴅ :** `{}`
+> **🪆 ᴏꜰꜰsᴇᴛ :** `{}`
+> **🔁 ꜰɪʟᴛᴇʀᴇᴅ :** `{}`
 
+**📊 sᴛᴀᴛᴜs :** `{}`
+**🔥 ᴄᴏᴍᴘʟᴇᴛɪᴏɴ :** `{}` %
 
-# Jishu Developer 
-# Don't Remove Credit 🥺
-# Telegram Channel @Madflix_Bots
-# Backup Channel @JishuBotz
-# Developer @JishuDeveloper
+**ᴅᴇᴠᴇʟᴏᴘᴇᴅ ʙʏ ᴅʜᴀɴᴘᴀʟ sʜᴀʀᴍᴀ**
+"""
+
+    TEXT1 = """
+**✅ ᴛᴀsᴋ ᴄᴏɴᴄʟᴜᴅᴇᴅ**
+
+> **🕵️ ᴛᴏᴛᴀʟ ɪɴᴅᴇxᴇᴅ :** `{}`
+> **🚀 sᴜᴄᴄᴇssꜰᴜʟ sʏɴᴄ :** `{}`
+> **👥 ᴅᴜᴘʟɪᴄᴀᴛᴇs :** `{}`
+> **🗑️ ᴅᴇʟᴇᴛᴇᴅ :** `{}`
+> **🪆 sᴋɪᴘᴘᴇᴅ :** `{}`
+
+**📊 ꜰɪɴᴀʟ sᴛᴀᴛs :** `{}`
+**⏳ ᴅᴜʀᴀᴛɪᴏɴ :** `{}`
+**⏰ ᴇᴛᴀ :** `{}`
+
+**ᴄʀᴇᴀᴛᴇᴅ ʙʏ ᴅʜᴀɴᴘᴀʟ sʜᴀʀᴍᴀ**
+"""
+
+    DUPLICATE_TEXT = """
+**🧹 ᴅᴇ-ᴅᴜᴘʟɪᴄᴀᴛɪᴏɴ ʀᴇᴘᴏʀᴛ**
+
+> **🕵️ ᴀɴᴀʟʏᴢᴇᴅ :** `{}`
+> **👥 ʀᴇᴍᴏᴠᴇᴅ :** `{}`
+
+**ᴅᴇᴠᴇʟᴏᴘᴇᴅ ʙʏ ᴅʜᴀɴᴘᴀʟ sʜᴀʀᴍᴀ**
+"""
+
+    DOUBLE_CHECK = """
+**🛡️ ᴘʀᴇ-ꜰʟɪɢʜᴛ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ**
+
+ᴄᴏɴꜰɪʀᴍ ᴛʜᴇ ꜰᴏʟʟᴏᴡɪɴɢ ᴘᴀʀᴀᴍᴇᴛᴇʀs ᴛᴏ ᴘʀᴏᴄᴇᴇᴅ:
+
+**★ sʏsᴛᴇᴍ :** [{botname}](t.me/{botuname})
+**★ sᴏᴜʀᴄᴇ :** `{from_chat}`
+**★ ᴛᴀʀɢᴇᴛ :** `{to_chat}`
+**★ ᴏꜰꜰsᴇᴛ :** `{skip}`
+
+> • *ᴠᴇʀɪꜰʏ [{botname}] ʜᴀs ᴀᴅᴍɪɴ ʀɪɢʜᴛs ɪɴ ᴛᴀʀɢᴇᴛ.*
+> • *ᴠᴇʀɪꜰʏ ᴜsᴇʀʙᴏᴛ ᴀᴄᴄᴇss ꜰᴏʀ ᴘʀɪᴠᴀᴛᴇ sᴏᴜʀᴄᴇs.*
+
+**ɪꜰ ᴀʟʟ ᴅᴀᴛᴀ ɪs ᴀᴄᴄᴜʀᴀᴛᴇ, sᴇʟᴇᴄᴛ ʏᴇs.**
+"""
