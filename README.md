@@ -1,93 +1,112 @@
-<img src="https://graph.org/file/7f7dcc89135e7d6c64bbb.jpg" alt="logo" target="/blank">
+<p align="center">
+  <img src="https://graph.org/file/7f7dcc89135e7d6c64bbb.jpg" alt="Ultra Forward Bot Logo" width="150">
+</p>
 
 <h1 align="center">
- <b><a href="https://t.me/MadflixForwardBot" target="/blank"> Ultra Forward Bot </a></>
+  🚀 Ultra Forward Bot
 </h1>
 
-<p align="center">🩵 Thanks for Being Here 🩵</p>
-
-
-### CONFIGS VARIABLES
-
-* `BOT_TOKEN` - Get bot token from <a href="https://t.me/BotFather" target="/blank">Bot Father</a>
-* `API_ID` - Get api id from <a href="https://my.telegram.org" target="/blank">Telegram Auth</a>
-* `API_HASH` - Get api hash from <a href="https://my.telegram.org" target="/blank">Telegram Auth</a>
-* `OWNER_ID` - Bot admin/owner user id.
-* `DATABASE_URI` - Mongo Database URL from <a href="https://cloud.mongodb.com" target="/blank">Mongo DB</a>
-* `DATABASE_NAME` - Your database name from mongoDB. (Optional)
-* `BOT_SESSION` - Your Bot session name. (Optional)
-
-
-
-### DEPLOYEMENT SUPPORT
-
-<summary>Deploy To Koyeb</summary>
-<p>
-<br>                 
-<a target="/blank" href="https://app.koyeb.com/deploy?type=git&repository=github.com/JishuDeveloper/Ultra-Forward-Bot&branch=main&name=ultra-forward-bot" >
-  <img src="https://www.koyeb.com/static/images/deploy/button.svg" alt="Deploy">
-</a>
+<p align="center">
+  <b>The ultimate high-speed content synchronization engine for Telegram.</b>
 </p>
 
-<summary>Deploy To Heroku</summary>
-<p>
-<br>
-<a href="https://heroku.com/deploy?template=https://github.com/JishuDeveloper/Ultra-Forward-Bot">
-  <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
-</a>
+<p align="center">
+  <img src="https://img.shields.io/github/license/Dhanpal-Sharma/Ultra-Forward-Bot?style=for-the-badge&logo=github&color=blue">
+  <img src="https://img.shields.io/github/stars/Dhanpal-Sharma/Ultra-Forward-Bot?style=for-the-badge&logo=github&color=gold">
+  <img src="https://img.shields.io/github/forks/Dhanpal-Sharma/Ultra-Forward-Bot?style=for-the-badge&logo=github&color=silver">
 </p>
 
+<p align="center">
+  🌌 <i>"Efficiency meets Elegance. Mirror your content with precision."</i> 🌌
+</p>
 
+---
 
+### 🛠️ Configuration Variables
 
+To run this bot, you need to set up the following environment variables.
 
-### FEATURES
- - Forward Message From Public Channel To Your Channel.
- - Forward Message From Private Channel To Your Channel.
- - Supports Broadcasts.
- - Set custom caption.
- - Custom Button.
- - Support Restricted Chats.
- - Skip Duplicate Messages.
- - Filter Type Of Messages.
- - Skip Messages Based On Extensions & Keywords & Size.
- - Deploy to Koyeb + Heroku + Railway.
- - Developer Service 24x7.
+| Variable | Description | Source |
+| :--- | :--- | :--- |
+| `BOT_TOKEN` | Your Telegram Bot Token | [BotFather](https://t.me/BotFather) |
+| `API_ID` | Telegram API Identification | [Telegram Auth](https://my.telegram.org) |
+| `API_HASH` | Telegram API Hash Key | [Telegram Auth](https://my.telegram.org) |
+| `OWNER_ID` | User ID of the Bot Owner | Use `/id` in any bot |
+| `DATABASE_URI` | MongoDB Connection URL | [Mongo DB](https://cloud.mongodb.com) |
+| `DATABASE_NAME` | Name of your Database (Optional) | MongoDB |
+| `BOT_SESSION` | Session name for the bot (Optional) | Pyrogram |
 
+---
 
+### 🚀 One-Click Deployment
 
-### ALL COMMANDS
+Choose your preferred platform to deploy the **Ultra Forward Bot** instantly.
 
-```
-start - Start the bot.
-forward - Forward messages.
-unequify - Delete dublicate files in channel.
-settings - Configure your settings.
-ping - To check bot ping.
-cancel - Cancel ongoing forwarding.
-reset - To reset all settings.
-donate - To support developer.
-stats - To check bot stats (Admin Only)
-resetall - To reset all user settings. (Admin Only)
-broadcast - To broadcast any message to all users (Admin Only)
-restart - Restart the bot (Admin Only)
-```
+<p align="center">
+  <a href="https://app.koyeb.com/deploy?type=git&repository=github.com/Dhanpal-Sharma/Ultra-Forward-Bot&branch=main&name=ultra-forward-bot">
+    <img src="https://www.koyeb.com/static/images/deploy/button.svg" alt="Deploy to Koyeb" width="200">
+  </a>
+  <br>
+  <a href="https://heroku.com/deploy?template=https://github.com/Dhanpal-Sharma/Ultra-Forward-Bot">
+    <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy to Heroku" width="200">
+  </a>
+</p>
 
+---
 
+### 🌟 Premium Features
 
-### ❤️ RESPECTING ❤️
-- [JishuDeveloper](https://github.com/JishuDeveloper)
-- [Madflix Official](https://github.com/jishusinha)
+> [!TIP]
+> **Built for stability and performance.**
 
-### 😍 BOTS CHANNEL 😍
-- [Madflix Botz](https://t.me/Madflix_Bots)
-- [Jishu Botz](https://t.me/JishuBotz)
+* 📂 **Public to Private:** Forward messages from any public channel without admin rights.
+* 🔒 **Private Access:** Use Userbot integration to sync from private channels you belong to.
+* 📡 **Broadcast Ready:** Supports mass transmission across multiple targets.
+* 📝 **Smart Captions:** Define custom caption templates for your files.
+* 🔘 **Interactive UI:** Custom buttons and menus for better engagement.
+* 🛡️ **Restricted Bypass:** Support for copying content from restricted (no-copy) chats.
+* 🧹 **Deduplication:** Automatically skip files already present in the target.
+* 🔍 **Advanced Filtering:** Filter by file extension, specific keywords, or file size.
 
-### 💕 CONTACT DEVELOPER 💕
-- [Jishu Developer](https://t.me/JishuDeveloper)
-- [Madflix Official](https://t.me/MadflixOfficials)
+---
 
-### ☕ BUY ME A COFFEE ☕
-- [PayPal](https://paypal.me/jishudeveloper/2.50USD)
-- [PhonePe](https://graph.org/file/6822df5af3a2e80637172.jpg)
-- [UPI](https://graph.org/file/b831109be4acff5c966d2.jpg)
+### ⌨️ Command Console
+
+| Command | Action | Permissions |
+| :--- | :--- | :--- |
+| `/start` | Wake up the bot and view initial menu | Everyone |
+| `/forward` | Initiate the content forwarding task | Everyone |
+| `/unequify` | Scan and remove duplicate files in chat | Everyone |
+| `/settings` | Open the configuration dashboard | Everyone |
+| `/ping` | Check the current latency of the bot | Everyone |
+| `/cancel` | Terminate the active forwarding task | Everyone |
+| `/reset` | Wipe your personal configuration | Everyone |
+| `/stats` | View global system statistics | **Owner Only** |
+| `/broadcast` | Send notification to all bot users | **Owner Only** |
+| `/restart` | Reboot the bot core | **Owner Only** |
+
+---
+
+### 🤝 Connect & Support
+
+<p align="center">
+  <b>Developer: Dhanpal Sharma</b><br>
+  <i>Crafting digital solutions for a better experience.</i>
+</p>
+
+<p align="center">
+  <a href="https://t.me/Dhanpal_Sharma">
+    <img src="https://img.shields.io/badge/Telegram-Contact%20Dev-blue?style=for-the-badge&logo=telegram" alt="Contact">
+  </a>
+</p>
+
+<p align="center">
+  <b>☕ Buy Me A Coffee</b><br>
+  <a href="https://paypal.me/DhanpalSharma"><b>PayPal</b></a> • 
+  <a href="https://graph.org/file/6822df5af3a2e80637172.jpg"><b>PhonePe</b></a> • 
+  <a href="https://graph.org/file/b831109be4acff5c966d2.jpg"><b>UPI ID</b></a>
+</p>
+
+<p align="center">
+  <b>© 2026 Dhanpal Sharma. All Rights Reserved.</b>
+</p>
