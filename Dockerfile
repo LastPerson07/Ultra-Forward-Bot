@@ -1,12 +1,29 @@
-FROM python:3.8-slim-buster
+FROM python:3.10-slim-bookworm
 
-RUN apt update && apt upgrade -y
-RUN apt install git -y
-COPY requirements.txt /requirements.txt
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
-RUN cd /
-RUN pip3 install -U pip && pip3 install -U -r requirements.txt
-RUN JishuDeveloper /Ultra-Forward-Bot
-WORKDIR /Ultra-Forward-Bot
-COPY start.sh /start.sh
-CMD ["/bin/bash", "/start.sh"] 
+RUN apt-get update && apt-get install -y \
+    git \
+    bash \
+    curl \
+    gcc \
+    libffi-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the code
+COPY . .
+
+# Render requires this
+EXPOSE 8080
+
+CMD ["python", "main.py"]
