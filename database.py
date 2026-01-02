@@ -1,11 +1,3 @@
-# Jishu Developer 
-# Don't Remove Credit 🥺
-# Telegram Channel @Madflix_Bots
-# Backup Channel @JishuBotz
-# Developer @JishuDeveloper
-
-
-
 from os import environ 
 from config import Config
 import motor.motor_asyncio
@@ -92,6 +84,7 @@ class Database:
         await self.col.update_one({'id': int(id)}, {'$set': {'configs': configs}})
          
     async def get_configs(self, id):
+        # 🟢 DHANPAL SHARMA PATCH: Added 'thread_id' to support Telegram Topics
         default = {
             'caption': None,
             'duplicate': True,
@@ -103,6 +96,7 @@ class Database:
             'protect': None,
             'button': None,
             'db_uri': None,
+            'thread_id': 0, # Default to 0 (Entire Group)
             'filters': {
                'poll': True,
                'text': True,
@@ -117,7 +111,11 @@ class Database:
         }
         user = await self.col.find_one({'id':int(id)})
         if user:
-            return user.get('configs', default)
+            res = user.get('configs', default)
+            # 🟢 SEAMLESS INTEGRATION: Auto-migration for existing users
+            if 'thread_id' not in res:
+                res['thread_id'] = 0
+            return res
         return default 
        
     async def add_bot(self, datas):
@@ -160,8 +158,10 @@ class Database:
      
     async def get_filters(self, user_id):
        filters = []
-       filter = (await self.get_configs(user_id))['filters']
-       for k, v in filter.items():
+       # Fixed: Pulled configs safely before accessing 'filters'
+       configs = await self.get_configs(user_id)
+       filter_dict = configs['filters']
+       for k, v in filter_dict.items():
           if v == False:
             filters.append(str(k))
        return filters
@@ -177,16 +177,3 @@ class Database:
        return self.nfy.find({})
      
 db = Database(Config.DB_URL, Config.DB_NAME)
-
-
-
-
-
-
-
-
-# Jishu Developer 
-# Don't Remove Credit 🥺
-# Telegram Channel @Madflix_Bots
-# Backup Channel @JishuBotz
-# Developer @JishuDeveloper
