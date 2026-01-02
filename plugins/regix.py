@@ -1,4 +1,3 @@
-
 import os
 import sys 
 import math
@@ -40,6 +39,10 @@ async def pub_(bot, message):
     m = await msg_edit(message.message, "Verifying Your Data's, Please Wait.")
     _bot, caption, forward_tag, data, protect, button = await sts.get_data(user)
     
+    # 🟢 INTEGRATION: Fetch configs for thread selection
+    configs = await db.get_configs(user)
+    thread_id = configs.get('thread_id', 0)
+    
     if not _bot:
         return await msg_edit(m, "You Didn't Added Any Bot. Please Add A Bot Using /settings !", wait=True)
         
@@ -47,7 +50,16 @@ async def pub_(bot, message):
         client = await start_clone_bot(CLIENT.client(_bot))
     except Exception as e:  
         return await m.edit(e)
-        
+    
+    # 🟢 SEAMLESS TOPIC DISCOVERY: Prompt to select topics if it's a forum
+    try:
+        source_chat = await client.get_chat(sts.get("FROM"))
+        if source_chat.is_forum and thread_id == 0:
+            await stop(client, user) # Stop temp session for UI update
+            return await show_topic_ui(bot, message, sts.get("FROM"), frwd_id)
+    except Exception as e:
+        logger.error(f"Forum Discovery Failed: {e}")
+
     await msg_edit(m, "Processing...")
     
     try: 
@@ -68,7 +80,6 @@ async def pub_(bot, message):
     await send(client, user, "🩷 Forwarding Started")
     sts.add(time=True)
     
-    # PATCHED: 1.5s is the maximum safe speed for persistent userbot forwarding.
     sleep = 0.5 if _bot['is_bot'] else 1.5
     
     await msg_edit(m, "Processing...") 
@@ -81,16 +92,17 @@ async def pub_(bot, message):
             pling=0
             await edit(m, 'Progressing', 10, sts)
             
+            # 🟢 SEAMLESS PATCH: Added message_thread_id for Forum Sync
             async for message in client.iter_messages(
                 client,
                 chat_id=sts.get('FROM'), 
                 limit=int(sts.get('limit')), 
-                offset=int(sts.get('skip')) if sts.get('skip') else 0
+                offset=int(sts.get('skip')) if sts.get('skip') else 0,
+                message_thread_id=thread_id if thread_id != 0 else None
             ):
                 if await is_cancelled(client, user, m, sts):
                     return
                 
-                # PATCHED: Throttled UI updates (every 50) to prevent interface FloodWaits
                 if pling % 50 == 0: 
                     await edit(m, 'Progressing', 10, sts)
                 pling += 1
@@ -113,7 +125,7 @@ async def pub_(bot, message):
                     if (notcompleted >= 100 or completed <= 100): 
                         await forward(client, MSG, m, sts, protect)
                         sts.add('total_files', notcompleted)
-                        await asyncio.sleep(5) # Safe cooldown for batch
+                        await asyncio.sleep(5) 
                         MSG = []
                 else:
                     new_caption = custom_caption(message, caption)
@@ -127,9 +139,61 @@ async def pub_(bot, message):
         finally:
             if i.TO in temp.IS_FRWD_CHAT:
                 temp.IS_FRWD_CHAT.remove(i.TO)
+            
+            # Reset preference after sync
+            configs['thread_id'] = 0
+            await db.update_configs(user, configs)
+            
             await send(client, user, "🎉 Forwarding Completed")
             await edit(m, 'Completed', "completed", sts) 
             await stop(client, user)
+
+# 🟢 FORUM UI HELPER: Fetches topics and prompts user
+async def show_topic_ui(bot, query, chat_id, frwd_id):
+    user_id = query.from_user.id
+    sts = STS(frwd_id)
+    _bot, _, _, _, _, _ = await sts.get_data(user_id)
+    
+    client = await start_clone_bot(CLIENT.client(_bot))
+    topics = []
+    async for topic in client.get_forum_topics(int(chat_id)):
+        topics.append(topic)
+    
+    if not topics:
+        query.data = f"start_public_{frwd_id}"
+        await client.stop()
+        return await pub_(bot, query)
+
+    buttons = []
+    for i in range(0, len(topics), 2):
+        row = [InlineKeyboardButton(f"📁 {topics[i].title}", f"save_topic#{topics[i].id}#{frwd_id}")]
+        if i + 1 < len(topics):
+            row.append(InlineKeyboardButton(f"📁 {topics[i+1].title}", f"save_topic#{topics[i+1].id}#{frwd_id}"))
+        buttons.append(row)
+    
+    buttons.append([InlineKeyboardButton("🔄 Mirror Entire Group", f"save_topic#0#{frwd_id}")])
+    
+    await bot.edit_message_text(
+        chat_id=query.message.chat.id,
+        message_id=query.message.id,
+        text="**📍 ꜰᴏʀᴜᴍ sᴜᴘᴘᴏʀᴛ ᴀᴄᴛɪᴠᴀᴛᴇᴅ**\n\n> ᴅᴇᴛᴇᴄᴛᴇᴅ ᴍᴜʟᴛɪᴘʟᴇ ᴛᴏᴘɪᴄs ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ. ᴡʜɪᴄʜ ᴏɴᴇ sʜᴏᴜʟᴅ ɪ sʏɴᴄ?",
+        reply_markup=InlineKeyboardMarkup(buttons)
+    )
+    await client.stop()
+
+# 🟢 SAVE TOPIC CALLBACK
+@Client.on_callback_query(filters.regex(r'^save_topic'))
+async def save_topic_callback(bot, query):
+    _, topic_id, frwd_id = query.data.split("#")
+    configs = await db.get_configs(query.from_user.id)
+    configs['thread_id'] = int(topic_id)
+    await db.update_configs(query.from_user.id, configs)
+    
+    await query.answer("Topic Selected! Restarting Sync...", show_alert=True)
+    query.data = f"start_public_{frwd_id}"
+    await pub_(bot, query)
+
+# --- RE-INTEGRATING YOUR EXISTING HELPER FUNCTIONS ---
 
 async def copy(bot, msg, m, sts):
     try:                                  
@@ -149,7 +213,6 @@ async def copy(bot, msg, m, sts):
                 reply_markup=msg.get('button'),
                 protect_content=msg.get("protect"))
     except FloodWait as e:
-        # PATCHED: Proper FloodWait handling. Must wait full duration.
         await edit(m, 'Progressing', e.value, sts)
         await asyncio.sleep(e.value)
         await copy(bot, msg, m, sts)
@@ -168,17 +231,6 @@ async def forward(bot, msg, m, sts, protect):
         await asyncio.sleep(e.value)
         await forward(bot, msg, m, sts, protect)
 
-PROGRESS = """
-╭── 📊 Transfer Status ──╮
-│ 📈 {0}% Completed
-│ 📥 Fetched   : {1}
-│ 🚀 Sent      : {2}
-│ ⏳ Left      : {3}
-│ ⚡ Status    : {4}
-│ ⏱️ ETA       : {5}
-╰──────────────────────╯
-"""
-
 async def msg_edit(msg, text, button=None, wait=None):
     try:
         return await msg.edit(text, reply_markup=button)
@@ -192,38 +244,24 @@ async def msg_edit(msg, text, button=None, wait=None):
 async def edit(msg, title, status, sts):
     i = sts.get(full=True)
     status = 'Forwarding' if status == 10 else f"Sleeping {status} s" if str(status).isnumeric() else status
-    
-    # PATCHED: Zero division safety
     total = float(i.total) if i.total else 1.0
     percentage = "{:.0f}".format(float(i.fetched)*100/total)
-    
     now = time.time()
     diff = int(now - i.start)
     speed = sts.divide(i.fetched, diff)
     elapsed_time = round(diff) * 1000
-    
-    # PATCHED: ETA logic safety
     spd = speed if speed > 0 else 1
     time_to_completion = round(sts.divide(i.total - i.fetched, int(spd))) * 1000
     estimated_total_time = elapsed_time + time_to_completion  
-    
-    progress = "▰{0}{1}".format(
-        ''.join(["▰" for _ in range(math.floor(int(percentage) / 10))]),
-        ''.join(["▱" for _ in range(10 - math.floor(int(percentage) / 10))]))
-    
+    progress = "▰{0}{1}".format(''.join(["▰" for _ in range(math.floor(int(percentage) / 10))]), ''.join(["▱" for _ in range(10 - math.floor(int(percentage) / 10))]))
     button = [[InlineKeyboardButton(title, f'fwrdstatus#{status}#{estimated_total_time}#{percentage}#{i.id}')]]
     estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
     estimated_total_time = estimated_total_time if estimated_total_time != '' else '0 s'
-
     text = TEXT.format(i.fetched, i.total_files, i.duplicate, i.deleted, i.skip, status, percentage, estimated_total_time, progress)
     if status in ["cancelled", "completed"]:
-        button.append([
-            InlineKeyboardButton('📢 Updates', url='https://t.me/Madflix_Bots'),
-            InlineKeyboardButton('💬 Support', url='https://t.me/MadflixBots_Support')
-        ])
+        button.append([InlineKeyboardButton('📢 Updates', url='https://t.me/Madflix_Bots'), InlineKeyboardButton('💬 Support', url='https://t.me/MadflixBots_Support')])
     else:
         button.append([InlineKeyboardButton('✖️ Cancel ✖️', 'terminate_frwd')])
-        
     await msg_edit(msg, text, InlineKeyboardMarkup(button))
 
 async def is_cancelled(client, user, msg, sts):
