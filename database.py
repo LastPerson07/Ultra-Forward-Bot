@@ -2,6 +2,7 @@ from os import environ
 from config import Config
 import motor.motor_asyncio
 from pymongo import MongoClient
+from datetime import datetime # 🟢 Added for expiry tracking
 
 async def mongodb_version():
     x = MongoClient(Config.DB_URL)
@@ -22,6 +23,9 @@ class Database:
         return dict(
             id = id,
             name = name,
+            is_premium = False, # 🟢 Added Premium Status
+            expiry = None,      # 🟢 Added Expiry Date
+            usage_count = 0,    # 🟢 Added Usage Counter
             ban_status=dict(
                 is_banned=False,
                 ban_reason="",
@@ -35,6 +39,36 @@ class Database:
     async def is_user_exist(self, id):
         user = await self.col.find_one({'id':int(id)})
         return bool(user)
+
+    # 🟢 ADDED: Logic to grant Premium status via Admin Command
+    async def make_premium(self, user_id, expiry_date):
+        await self.col.update_one(
+            {'id': int(user_id)}, 
+            {'$set': {'is_premium': True, 'expiry': expiry_date}}
+        )
+
+    # 🟢 ADDED: Logic to remove Premium status
+    async def remove_premium(self, user_id):
+        await self.col.update_one(
+            {'id': int(user_id)}, 
+            {'$set': {'is_premium': False, 'expiry': None}}
+        )
+
+    # 🟢 ADDED: Tracks messages forwarded for Free-Tier Quota
+    async def increment_usage(self, user_id, count=1):
+        await self.col.update_one({'id': int(user_id)}, {'$inc': {'usage_count': count}})
+
+    # 🟢 ADDED: Fetches full subscription data for the Guard logic
+    async def get_user_status(self, user_id):
+        user = await self.col.find_one({'id': int(user_id)})
+        if user:
+            return {
+                'is_premium': user.get('is_premium', False),
+                'expiry': user.get('expiry'),
+                'usage_count': user.get('usage_count', 0),
+                'limit': 50 # You can adjust the free limit here
+            }
+        return {'is_premium': False, 'expiry': None, 'usage_count': 0, 'limit': 50}
     
     async def total_users_bots_count(self):
         bcount = await self.bot.count_documents({})
@@ -46,24 +80,15 @@ class Database:
         return count
     
     async def remove_ban(self, id):
-        ban_status = dict(
-            is_banned=False,
-            ban_reason=''
-        )
+        ban_status = dict(is_banned=False, ban_reason='')
         await self.col.update_one({'id': id}, {'$set': {'ban_status': ban_status}})
     
     async def ban_user(self, user_id, ban_reason="No Reason"):
-        ban_status = dict(
-            is_banned=True,
-            ban_reason=ban_reason
-        )
+        ban_status = dict(is_banned=True, ban_reason=ban_reason)
         await self.col.update_one({'id': user_id}, {'$set': {'ban_status': ban_status}})
 
     async def get_ban_status(self, id):
-        default = dict(
-            is_banned=False,
-            ban_reason=''
-        )
+        default = dict(is_banned=False, ban_reason='')
         user = await self.col.find_one({'id':int(id)})
         if not user:
             return default
@@ -84,35 +109,20 @@ class Database:
         await self.col.update_one({'id': int(id)}, {'$set': {'configs': configs}})
          
     async def get_configs(self, id):
-        # 🟢 DHANPAL SHARMA PATCH: Added 'thread_id' to support Telegram Topics
         default = {
-            'caption': None,
-            'duplicate': True,
-            'forward_tag': False,
-            'file_size': 0,
-            'size_limit': None,
-            'extension': None,
-            'keywords': None,
-            'protect': None,
-            'button': None,
-            'db_uri': None,
-            'thread_id': 0, # Default to 0 (Entire Group)
+            'caption': None, 'duplicate': True, 'forward_tag': False,
+            'file_size': 0, 'size_limit': None, 'extension': None,
+            'keywords': None, 'protect': None, 'button': None,
+            'db_uri': None, 'thread_id': 0, 
             'filters': {
-               'poll': True,
-               'text': True,
-               'audio': True,
-               'voice': True,
-               'video': True,
-               'photo': True,
-               'document': True,
-               'animation': True,
-               'sticker': True
+               'poll': True, 'text': True, 'audio': True, 'voice': True,
+               'video': True, 'photo': True, 'document': True,
+               'animation': True, 'sticker': True
             }
         }
         user = await self.col.find_one({'id':int(id)})
         if user:
             res = user.get('configs', default)
-            # 🟢 SEAMLESS INTEGRATION: Auto-migration for existing users
             if 'thread_id' not in res:
                 res['thread_id'] = 0
             return res
@@ -158,7 +168,6 @@ class Database:
      
     async def get_filters(self, user_id):
        filters = []
-       # Fixed: Pulled configs safely before accessing 'filters'
        configs = await self.get_configs(user_id)
        filter_dict = configs['filters']
        for k, v in filter_dict.items():
