@@ -7,7 +7,8 @@ import logging
 from .utils import STS
 from database import db 
 from .test import CLIENT , start_clone_bot
-from config import Config, temp
+# Fixed: Importing Temp as temp to match your class name in config.py
+from config import Config, Temp as temp
 from translation import Translation
 from pyrogram import Client, filters 
 from pyrogram.errors import FloodWait, MessageNotModified, RPCError
@@ -24,7 +25,8 @@ async def pub_(bot, message):
     temp.CANCEL[user] = False
     frwd_id = message.data.split("_")[2]
     
-    if temp.lock.get(user) and str(temp.lock.get(user))=="True":
+    # Corrected lock check
+    if temp.lock.get(user) == True:
         return await message.answer("Please Wait Until Previous Task Complete", show_alert=True)
     
     sts = STS(frwd_id)
@@ -44,7 +46,11 @@ async def pub_(bot, message):
     
     # 🟢 PATCH: Quota Guard (Lead Generation for Admin)
     if not is_vip and user_status['usage_count'] >= user_status['limit']:
-        await bot.send_message(Config.LOG_CHANNEL, f"⚠️ **QUOTA ALERT**\n👤 User: `{user}`\nStatus: `Free Tier` (Limit Hit)")
+        # Safety check for LOG_CHANNEL
+        log_channel = getattr(Config, 'LOG_CHANNEL', None)
+        if log_channel:
+            await bot.send_message(log_channel, f"⚠️ **QUOTA ALERT**\n👤 User: `{user}`\nStatus: `Free Tier` (Limit Hit)")
+        
         btn = [[InlineKeyboardButton("💎 ᴜᴘɢʀᴀᴅᴇ ᴛᴏ ᴘʀᴇᴍɪᴜᴍ", callback_data="buy_premium")]]
         return await msg_edit(m, "⚠️ **Free Quota Exhausted!**\n\nUpgrade to Premium for unlimited syncs.", InlineKeyboardMarkup(btn))
 
@@ -58,12 +64,12 @@ async def pub_(bot, message):
     try:
         client = await start_clone_bot(CLIENT.client(_bot))
     except Exception as e:  
-        return await m.edit(e)
+        return await m.edit(f"Error starting client: {e}")
     
     # 🟢 PATCH: Seamless Topic Discovery for Forums
     try:
         source_chat = await client.get_chat(sts.get("FROM"))
-        if source_chat.is_forum and thread_id == 0:
+        if getattr(source_chat, 'is_forum', False) and thread_id == 0:
             await stop(client, user)
             return await show_topic_ui(bot, message, sts.get("FROM"), frwd_id)
     except Exception as e:
@@ -89,7 +95,7 @@ async def pub_(bot, message):
     await send(client, user, "🩷 Forwarding Started")
     sts.add(time=True)
     
-    sleep = 0.5 if _bot['is_bot'] else 1.5
+    sleep = 0.5 if _bot.get('is_bot', True) else 1.5
     
     await msg_edit(m, "Processing...") 
     temp.IS_FRWD_CHAT.append(i.TO)
@@ -101,12 +107,11 @@ async def pub_(bot, message):
             pling=0
             await edit(m, 'Progressing', 10, sts)
             
-            async for message in client.iter_messages(
-                client,
+            # Corrected iter_messages/get_chat_history usage
+            async for message in client.get_chat_history(
                 chat_id=sts.get('FROM'), 
                 limit=int(sts.get('limit')), 
-                offset=int(sts.get('skip')) if sts.get('skip') else 0,
-                message_thread_id=thread_id if thread_id != 0 else None
+                offset_id=int(sts.get('skip')) if sts.get('skip') else 0
             ):
                 if await is_cancelled(client, user, m, sts):
                     return
@@ -162,12 +167,16 @@ async def pub_(bot, message):
             await db.update_configs(user, configs)
             
             # 📢 LOG: Task Completion
-            log_txt = f"✅ **TASK FINISHED**\n👤 User: `{user}`\n📥 Files: `{sts.get('fetched')}`\n💎 VIP: `{is_vip}`"
-            await bot.send_message(Config.LOG_CHANNEL, log_txt)
+            log_channel = getattr(Config, 'LOG_CHANNEL', None)
+            if log_channel:
+                log_txt = f"✅ **TASK FINISHED**\n👤 User: `{user}`\n📥 Files: `{sts.get('fetched')}`\n💎 VIP: `{is_vip}`"
+                await bot.send_message(log_channel, log_txt)
             
             await send(client, user, "🎉 Forwarding Completed")
             await edit(m, 'Completed', "completed", sts) 
             await stop(client, user)
+
+# ... [The remaining Helper Functions and Topic UI logic as provided] ...
 
 # 🟢 TOPIC UI HELPER
 async def show_topic_ui(bot, query, chat_id, frwd_id):
