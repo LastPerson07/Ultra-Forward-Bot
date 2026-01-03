@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file if it exists
 load_dotenv()
 
 class Config:
@@ -10,23 +9,30 @@ class Config:
     API_HASH = os.environ.get("API_HASH", "")
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
     
-    # --- Database Config ---
+    # --- Database & Sessions ---
     DB_URL = os.environ.get("DB_URL", "")
     DB_NAME = os.environ.get("DB_NAME", "forward_bot_db")
-    
-    # --- Session & Identity ---
     BOT_SESSION = os.environ.get("BOT_SESSION", "forward-bot")
-    # Converts a space-separated string of IDs into a list of integers
-    OWNER_ID = [int(id) for id in os.environ.get("OWNER_ID", "").split() if id.isdigit()]
     
-    # --- Optional Settings ---
-    LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", 0))  # For logging bot actions
-    PREFIX = os.environ.get("PREFIX", ".").split()     # Command prefixes
+    # --- Identity & Security ---
+    # Split by space or comma, then convert to int. Handles empty strings safely.
+    OWNER_ID = [int(id) for id in os.environ.get("OWNER_ID", "").replace(',', ' ').split() if id.strip().isdigit()]
+    
+    # --- "Big Channel" & Performance Fixes ---
+    # Increase workers for concurrent message handling in big channels
+    TG_WORKERS = int(os.environ.get("TG_WORKERS", "100")) 
+    # Max messages to process in a single batch to avoid memory spikes
+    MAX_BATCH_SIZE = 200 
+    # Port for Render Web Service
+    PORT = int(os.environ.get("PORT", "8080")) 
 
 class Temp:
-    """Runtime temporary storage (reset on restart)"""
-    lock = {}
-    CANCEL = {}
-    forwardings = 0
-    BANNED_USERS = []
-    IS_FRWD_CHAT = []
+    """
+    Runtime storage that clears on restart.
+    Used for tracking active processes and anti-spam.
+    """
+    lock = {}           # To prevent multiple actions on one chat
+    CANCEL = {}         # To track cancellation requests
+    forwardings = 0     # Global counter for active tasks
+    BANNED_USERS = []   # Cached list of banned IDs for speed
+    IS_FRWD_CHAT = []   # List of chats currently being processed
