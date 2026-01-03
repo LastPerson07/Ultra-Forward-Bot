@@ -8,7 +8,7 @@ async def mongodb_version():
     # Using a sync client briefly is fine for a one-time startup check
     x = MongoClient(Config.DB_URL)
     version = x.server_info()['version']
-    x.close() # Always close manual connections
+    x.close() 
     return version
 
 class Database:
@@ -20,6 +20,7 @@ class Database:
         self.col = self.db.users
         self.nfy = self.db.notify
         self.chl = self.db.channels 
+        self.file_storage = self.db.files # New collection for Bin Channel tracking
         
     def new_user(self, id, name):
         """Standardizes the user document structure."""
@@ -33,7 +34,7 @@ class Database:
                 is_banned=False,
                 ban_reason="",
             ),
-            configs=None # Initialize as None to avoid KeyErrors later
+            configs=None 
         )
       
     async def add_user(self, id, name):
@@ -123,11 +124,21 @@ class Database:
         user = await self.col.find_one({'id': int(id)})
         if user and user.get('configs'):
             res = user['configs']
-            # Ensure new keys don't break old user records
-            if 'thread_id' not in res: res['thread_id'] = 0
-            return res
+            # Safety check: if configs is a dict, ensure keys exist
+            if isinstance(res, dict):
+                if 'thread_id' not in res: res['thread_id'] = 0
+                return res
         return default 
        
+    async def save_file(self, user_id, file_id, bin_msg_id):
+        """Logic for Bin Channel tracking"""
+        return await self.file_storage.insert_one({
+            "user_id": int(user_id),
+            "file_id": file_id,
+            "bin_msg_id": int(bin_msg_id),
+            "date": datetime.now()
+        })
+
     async def add_bot(self, datas):
        if not await self.is_bot_exist(datas['user_id']):
           await self.bot.insert_one(datas)
@@ -172,7 +183,6 @@ class Database:
        return [str(k) for k, v in filter_dict.items() if v is False]
               
     async def add_frwd(self, user_id):
-       # Prevent duplicate entries in notify collection
        if not await self.nfy.find_one({'user_id': int(user_id)}):
            return await self.nfy.insert_one({'user_id': int(user_id)})
     
@@ -183,5 +193,4 @@ class Database:
     async def get_all_frwd(self):
        return self.nfy.find({})
 
-# Instance used by other files
 db = Database(Config.DB_URL, Config.DB_NAME)
